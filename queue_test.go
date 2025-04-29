@@ -96,14 +96,14 @@ func TestConcurrentEnqueueDequeue(t *testing.T) {
 	wg.Add(2)
 
 	go func() {
-		for i := 0; i < items; i++ {
+		for i := range items {
 			q.Enqueue(i)
 		}
 		wg.Done()
 	}()
 
 	go func() {
-		for i := 0; i < items; i++ {
+		for range items {
 			q.Dequeue()
 		}
 		wg.Done()
@@ -241,7 +241,7 @@ func TestStressConcurrentProducersConsumers(t *testing.T) {
 	var mu sync.Mutex
 
 	// Consumers
-	for i := 0; i < numConsumers; i++ {
+	for range numConsumers {
 		go func() {
 			for {
 				item := q.Dequeue()
@@ -257,10 +257,10 @@ func TestStressConcurrentProducersConsumers(t *testing.T) {
 	}
 
 	// Producers
-	for i := 0; i < numProducers; i++ {
+	for range numProducers {
 		go func() {
-			for j := 0; j < itemsPerProd; j++ {
-				q.Enqueue(j)
+			for i := range itemsPerProd {
+				q.Enqueue(i)
 			}
 			prodWg.Done()
 		}()
